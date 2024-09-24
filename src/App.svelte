@@ -2,6 +2,7 @@
 	let currentPage = 'dashboard';
 	let userName = "Maya Angela";
 	let currentTab = 'credentials';
+	let activeSection = 'education';
 
 	function navigateTo(page) {
 		currentPage = page;
@@ -24,6 +25,10 @@
 		currentTab = tab;
 	}
 
+	function toggleSection(section) {
+		activeSection = section;
+	}
+
 	function getDefaultTab(page) {
 		switch(page) {
 			case 'profile':
@@ -37,6 +42,16 @@
 				return '';
 		}
 	}
+
+	const sections = [
+		{ id: 'education', title: 'Education', content: 'Education content goes here' },
+		{ id: 'workHistory', title: 'Work History', content: 'Work History content goes here' },
+		{ id: 'training', title: 'Training', content: 'Training content goes here' },
+		{ id: 'certifications', title: 'Certifications', content: 'Certifications content goes here' },
+		{ id: 'otherSkillsets', title: 'Other Skillsets', content: 'Other Skillsets content goes here' },
+		{ id: 'extraCurriculars', title: 'Extra-Curriculars', content: 'Extra-Curriculars content goes here' },
+		{ id: 'testimonials', title: 'Testimonials', content: 'Testimonials content goes here' },
+	];
 </script>
 
 <main>
@@ -121,12 +136,21 @@
 								<div class="avatar-container">
 									<img src="/images/avatar.jpg" alt="User Avatar" class="tall-avatar">
 								</div>
-								<div class="user-info">
-									<p class="user-info-name"><strong>{userName}</strong></p>
+								<div class="tab-content-data user-info">
+									<div class="user-info-header">
+										<p class="user-info-name"><strong>{userName}</strong></p>
+										<button class="crud-button"><img class="crud-icon" src="/images/edit.png" alt="edit"/></button>
+									</div>
 									<p class="user-info-position"><strong>Restaurant Manager/KFC</strong></p>
 									<ul class="user-info-group">
 										<li><img class="user-info-icon" src="/images/id.png" alt="id"/><p class="user-info-item"><strong></strong> KFC12345</p></li>
-										<li><img class="user-info-icon" src="/images/nationality.png" alt="id"/><p class="user-info-item"><strong></strong> 🇺🇸</p></li>
+										<li>
+											<img class="user-info-icon" src="/images/nationality.png" alt="id"/>
+											<p class="user-info-item">
+												<strong></strong>
+												<img src="https://flagcdn.com/w20/ke.png" alt="Kenyan flag" style="vertical-align: middle;"/>
+											</p>
+										</li>
 										<li><img class="user-info-icon" src="/images/address.png" alt="id"/><p class="user-info-item"><strong></strong> 123 Main St, Anytown, USA</p></li>
 										<li><img class="user-info-icon" src="/images/email.png" alt="id"/><p class="user-info-item"><strong></strong> {userName.toLowerCase().replace(' ', '.')}@kfc.com</p></li>
 										<li><img class="user-info-icon" src="/images/phone.png" alt="id"/><p class="user-info-item"><strong></strong> +1 (555) 123-4567</p></li>
@@ -140,8 +164,49 @@
 								</div>
 							</div>
 						{:else if currentTab === 'resume'}
-							<h3>Resume</h3>
-							<!-- Add resume content here -->
+						<div class="resume-content">
+							<div class="left-column">
+								<div class="avatar-container">
+									<img src="/images/avatar.jpg" alt="User Avatar" class="tall-avatar">
+								</div>
+								<div class="tab-content-data user-info">
+									<div class="user-info-header">
+										<p class="user-info-name"><strong>{userName}</strong></p>
+										<button class="crud-button"><img class="crud-icon" src="/images/edit.png" alt="edit"/></button>
+									</div>
+									<p class="user-info-position"><strong>Restaurant Manager/KFC</strong></p>
+									<ul class="user-info-group">
+										<li><img class="user-info-icon" src="/images/id.png" alt="id"/><p class="user-info-item"><strong></strong> KFC12345</p></li>
+										<li>
+											<img class="user-info-icon" src="/images/nationality.png" alt="id"/>
+											<p class="user-info-item">
+												<strong></strong>
+												<img src="https://flagcdn.com/w20/ke.png" alt="Kenyan flag" style="vertical-align: middle;"/>
+											</p>
+										</li>
+										<li><img class="user-info-icon" src="/images/address.png" alt="id"/><p class="user-info-item"><strong></strong> 123 Main St, Anytown, USA</p></li>
+										<li><img class="user-info-icon" src="/images/email.png" alt="id"/><p class="user-info-item"><strong></strong> {userName.toLowerCase().replace(' ', '.')}@kfc.com</p></li>
+										<li><img class="user-info-icon" src="/images/phone.png" alt="id"/><p class="user-info-item"><strong></strong> +1 (555) 123-4567</p></li>
+									</ul>
+								</div>
+							</div>
+							<div class="resume-sections">
+								{#each sections as section}
+									<div class="accordion-item">
+										<button class="accordion-toggle" on:click={() => toggleSection(section.id)}>
+											{section.title}
+											<span class="toggle-icon">{activeSection === section.id ? '▼' : '▶'}</span>
+										</button>
+										{#if activeSection === section.id}
+											<div class="accordion-content">
+												<!-- Add content for each section here -->
+												<p>{section.content}</p>
+											</div>
+										{/if}
+									</div>
+								{/each}
+							</div>
+						</div>
 						{:else if currentTab === 'documents'}
 							<h3>Documents</h3>
 							<!-- Add documents content here -->
@@ -227,7 +292,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-top: 1em;
+		margin-top: 2em;
 		margin-bottom: 0.5em;
 		transition: background-color 0.3s ease;
 	}
@@ -275,7 +340,7 @@
 	}
 
 	button.active {
-		background-color: #FF0000;
+		background-color: #ff593b;
 		color: white;
 	}
 
@@ -321,15 +386,18 @@
 	}
 
 	.tabs button.active {
-		background-color: #FF0000;
+		background-color: #ff593b;
 		color: white;
 	}
 
 	.tab-content {
 		background-color: #e0e0e0;
-		padding: 1em;
 		border-radius: 4px;
 		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.tab-content-data {
+		padding: 1em;
 	}
 
 	.credentials-content {
@@ -345,7 +413,6 @@
 		width: 300px;
 		height: 500px;
 		object-fit: cover;
-		border-radius: 10px;
 	}
 
 	.user-info {
@@ -370,6 +437,9 @@
 	.social-media-links li {
 		display: flex;
 		align-items: center;
+		font-size: 1em;
+		font-weight: 400;
+		color: #2c2b2b;
 	}
 
 	.social-media-links img {
@@ -397,11 +467,13 @@
 	.user-info-name {
 		font-size: 2.5em;
 		font-weight: 700;
+		margin-right: auto; /* This will push the name to the left */
 	}
 
 	.user-info-item {
 		font-size: 1em;
-		font-weight: 500;
+		font-weight: 600;
+		color: #6f6b6a;
 	}
 
 	.user-info-position {
@@ -427,4 +499,84 @@
 		display: flex;
 		align-items: center;
 	}
+
+	.user-info-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+	}
+
+	.crud-button {
+		padding: 5px 10px;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		font-size: 0.9em;
+		display: flex;
+		align-items: center;
+		width: auto; /* This allows the button to size based on content */
+		min-width: 40px; /* Minimum width to ensure the icon fits */
+		justify-content: center;
+	}
+
+	.crud-icon {
+		width: 20px;
+		height: 20px;
+	}
+
+	.resume-content {
+		display: flex;
+		gap: 2em;
+	}
+
+	.left-column {
+		flex-shrink: 0;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.resume-sections {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.accordion-item {
+		border-radius: 4px;
+		margin-bottom: 1em;
+	}
+
+	.accordion-toggle {
+		width: 100%;
+		padding: 0.5em 1em;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		color: #474544;
+		font-size: 1.1em;
+		font-weight: 600;
+	}
+
+	.accordion-toggle:hover {
+		background-color: #f5f5f5;
+	}
+
+	.toggle-icon {
+		font-size: 1.2em;
+		font-weight: bold;
+	}
+
+	.accordion-content {
+		padding: 1em;
+		font-size: 1em;
+		font-weight: 450;
+		color: #696766;
+	}
+
 </style>
