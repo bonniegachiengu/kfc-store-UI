@@ -1,9 +1,12 @@
 <script>
 	let currentPage = 'dashboard';
 	let userName = "Maya Angela";
+	let currentTab = 'credentials';
 
 	function navigateTo(page) {
 		currentPage = page;
+		// Reset the tab when changing pages
+		currentTab = getDefaultTab(page);
 	}
 
 	function handleProfileClick(event) {
@@ -16,6 +19,24 @@
 		// Add logout functionality here
 		console.log('Logging out...');
 	}
+
+	function switchTab(tab) {
+		currentTab = tab;
+	}
+
+	function getDefaultTab(page) {
+		switch(page) {
+			case 'profile':
+				return 'credentials';
+			case 'inventory':
+				return 'overview';
+			case 'maintenance':
+				return 'schedule';
+			// Add more cases for other pages as needed
+			default:
+				return '';
+		}
+	}
 </script>
 
 <main>
@@ -26,8 +47,8 @@
 					on:click={handleProfileClick} 
 					on:keydown={handleProfileClick}
 					tabindex="0"
-					role="button"
-					aria-label="View Profile"
+					 role="button"
+					 aria-label="View Profile"
 				>
 					<img src="/images/avatar.jpg" alt="User Avatar" class="avatar-image" />
 				</div>
@@ -87,7 +108,51 @@
 					<p>Select a section from the navigation menu to get started.</p>
 				{:else if currentPage === 'profile'}
 					<h2>Profile</h2>
-					<p>Here you can view someone's profile.</p>
+					<div class="tabs">
+						<button class:active={currentTab === 'credentials'} on:click={() => switchTab('credentials')}>Credentials</button>
+						<button class:active={currentTab === 'resume'} on:click={() => switchTab('resume')}>Resume</button>
+						<button class:active={currentTab === 'documents'} on:click={() => switchTab('documents')}>Documents</button>
+						<button class:active={currentTab === 'preferences'} on:click={() => switchTab('preferences')}>Preferences</button>
+						<button class:active={currentTab === 'messages'} on:click={() => switchTab('messages')}>Messages</button>
+					</div>
+					<div class="tab-content">
+						{#if currentTab === 'credentials'}
+							<div class="credentials-content">
+								<div class="avatar-container">
+									<img src="/images/avatar.jpg" alt="User Avatar" class="tall-avatar">
+								</div>
+								<div class="user-info">
+									<p class="user-info-name"><strong>{userName}</strong></p>
+									<p class="user-info-position"><strong>Restaurant Manager/KFC</strong></p>
+									<ul class="user-info-group">
+										<li><img class="user-info-icon" src="/images/id.png" alt="id"/><p class="user-info-item"><strong></strong> KFC12345</p></li>
+										<li><img class="user-info-icon" src="/images/nationality.png" alt="id"/><p class="user-info-item"><strong></strong> 🇺🇸</p></li>
+										<li><img class="user-info-icon" src="/images/address.png" alt="id"/><p class="user-info-item"><strong></strong> 123 Main St, Anytown, USA</p></li>
+										<li><img class="user-info-icon" src="/images/email.png" alt="id"/><p class="user-info-item"><strong></strong> {userName.toLowerCase().replace(' ', '.')}@kfc.com</p></li>
+										<li><img class="user-info-icon" src="/images/phone.png" alt="id"/><p class="user-info-item"><strong></strong> +1 (555) 123-4567</p></li>
+									</ul>
+									<br>
+									<ul class="social-media-links">
+										<li><img src="/images/x-icon.png" alt="x" class="social-icon" /> {userName.toLowerCase().replace(' ', '_')}</li>
+										<li><img src="/images/tik-icon.png" alt="tiktok" class="social-icon" /> {userName.toLowerCase().replace(' ', '_')}</li>
+										<li><img src="/images/insta-icon.png" alt="Instagram" class="social-icon" /> {userName.toLowerCase().replace(' ', '_')}_kfc</li>
+									</ul>
+								</div>
+							</div>
+						{:else if currentTab === 'resume'}
+							<h3>Resume</h3>
+							<!-- Add resume content here -->
+						{:else if currentTab === 'documents'}
+							<h3>Documents</h3>
+							<!-- Add documents content here -->
+						{:else if currentTab === 'preferences'}
+							<h3>Preferences</h3>
+							<!-- Add preferences content here -->
+						{:else if currentTab === 'messages'}
+							<h3>Messages</h3>
+							<!-- Add messages content here -->
+						{/if}
+					</div>
 				{:else if currentPage === 'channels'}
 					<h2>Channels</h2>
 					<p>Here you can manage point of sale channels.</p>
@@ -96,6 +161,7 @@
 					<p>Here you can manage schedules.</p>
 				{:else if currentPage === 'inventory'}
 					<h2>Inventory</h2>
+					<!-- Add tabs for inventory page if needed -->
 					<p>Here you can manage inventory.</p>
 				{:else if currentPage === 'personnel'}
 					<h2>Personnel</h2>
@@ -114,6 +180,7 @@
 					<p>Here you can manage clients.</p>
 				{:else if currentPage === 'maintenance'}
 					<h2>Maintenance</h2>
+					<!-- Add tabs for maintenance page if needed -->
 					<p>Here you can manage maintenance.</p>
 				{/if}
 			</section>
@@ -160,7 +227,7 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
-		margin-top: 3em;
+		margin-top: 1em;
 		margin-bottom: 0.5em;
 		transition: background-color 0.3s ease;
 	}
@@ -220,7 +287,6 @@
 
 	.content {
 		flex-grow: 1;
-		padding: 1em;
 		overflow-y: auto;
 		text-align: left;
 	}
@@ -239,6 +305,79 @@
 		color: #6a6969;
 	}
 
+	.tabs {
+		display: flex;
+		margin-bottom: 1em;
+	}
+
+	.tabs button {
+		padding: 0.5em 1em;
+		margin-right: 0.5em;
+		background-color: #f0f0f0;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		transition: background-color 0.3s ease;
+	}
+
+	.tabs button.active {
+		background-color: #FF0000;
+		color: white;
+	}
+
+	.tab-content {
+		background-color: #e0e0e0;
+		padding: 1em;
+		border-radius: 4px;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	}
+
+	.credentials-content {
+		display: flex;
+		gap: 2em;
+	}
+
+	.avatar-container {
+		flex-shrink: 0;
+	}
+
+	.tall-avatar {
+		width: 300px;
+		height: 500px;
+		object-fit: cover;
+		border-radius: 10px;
+	}
+
+	.user-info {
+		flex-grow: 1;
+	}
+
+	.user-info p {
+		margin: 0.5em 0;
+	}
+
+	.user-info ul {
+		list-style-type: none;
+		padding-left: 1em;
+	}
+
+	.social-media-links {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5em;
+	}
+
+	.social-media-links li {
+		display: flex;
+		align-items: center;
+	}
+
+	.social-media-links img {
+		width: 20px;
+		height: 20px;
+		margin-right: 0.5em;
+	}
+
 	@media (max-width: 768px) {
 		.layout {
 			flex-direction: column;
@@ -253,5 +392,39 @@
 		.content {
 			padding: 1em;
 		}
+	}
+
+	.user-info-name {
+		font-size: 2.5em;
+		font-weight: 700;
+	}
+
+	.user-info-item {
+		font-size: 1em;
+		font-weight: 500;
+	}
+
+	.user-info-position {
+		font-size: 1.3em;
+		font-weight: 700;
+		color: #2b78ff;
+		margin-top: 0.5em;
+	}
+
+	.user-info-icon {
+		width: 20px;
+		height: 20px;
+		margin-right: 0.5em;
+	}
+
+	.user-info-group {
+		display: flex;
+		flex-direction: column;
+		padding-top: 1em;
+	}
+
+	.user-info-group li {
+		display: flex;
+		align-items: center;
 	}
 </style>
