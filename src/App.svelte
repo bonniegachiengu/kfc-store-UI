@@ -22,27 +22,53 @@
 				role="button"
 				aria-label="View Profile"
 			>
-				<svg viewBox="0 0 24 24" width="48" height="48">
-					<path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-				</svg>
+				<img src="/images/avatar.jpg" alt="User Avatar" class="avatar-image" />
 			</div>
-			<button class:active={currentPage === 'home'} on:click={() => navigateTo('home')}>Home</button>
-			<button class:active={currentPage === 'profile'} on:click={() => navigateTo('profile')}>Profile</button>
-			<button class:active={currentPage === 'channels'} on:click={() => navigateTo('channels')}>Channels</button>
-			<button class:active={currentPage === 'schedules'} on:click={() => navigateTo('schedules')}>Schedules</button>
-			<button class:active={currentPage === 'inventory'} on:click={() => navigateTo('inventory')}>Inventory</button>
-			<button class:active={currentPage === 'dashboard'} on:click={() => navigateTo('dashboard')}>Dashboard</button>
-			<button class:active={currentPage === 'personnel'} on:click={() => navigateTo('personnel')}>Personnel</button>
-			<button class:active={currentPage === 'orders'} on:click={() => navigateTo('orders')}>Orders</button>
-			<button class:active={currentPage === 'products'} on:click={() => navigateTo('products')}>Products</button>
-			<button class:active={currentPage === 'stations'} on:click={() => navigateTo('stations')}>Stations</button>
-			<button class:active={currentPage === 'clients'} on:click={() => navigateTo('clients')}>Clients</button>
-			<button class:active={currentPage === 'maintenance'} on:click={() => navigateTo('maintenance')}>Maintenance</button>
+			<button class:active={currentPage === 'dashboard'} on:click={() => navigateTo('dashboard')}>
+				<img src="/images/dashboard.png" alt="Dashboard Icon" class="nav-icon" />
+				Dashboard
+			</button>
+			<button class:active={currentPage === 'channels'} on:click={() => navigateTo('channels')}>
+				<img src="/images/channels.png" alt="Channels Icon" class="nav-icon" />
+				Channels
+			</button>
+			<button class:active={currentPage === 'schedules'} on:click={() => navigateTo('schedules')}>
+				<img src="/images/schedules.png" alt="Schedules Icon" class="nav-icon" />
+				Schedules
+			</button>
+			<button class:active={currentPage === 'inventory'} on:click={() => navigateTo('inventory')}>
+				<img src="/images/inventory.png" alt="Inventory Icon" class="nav-icon" />
+				Inventory
+			</button>
+			<button class:active={currentPage === 'personnel'} on:click={() => navigateTo('personnel')}>
+				<img src="/images/personnel.png" alt="Personnel Icon" class="nav-icon" />
+				Personnel
+			</button>
+			<button class:active={currentPage === 'orders'} on:click={() => navigateTo('orders')}>
+				<img src="/images/orders.png" alt="Orders Icon" class="nav-icon" />
+				Orders
+			</button>
+			<button class:active={currentPage === 'products'} on:click={() => navigateTo('products')}>
+				<img src="/images/products.png" alt="Products Icon" class="nav-icon" />
+				Products
+			</button>
+			<button class:active={currentPage === 'stations'} on:click={() => navigateTo('stations')}>
+				<img src="/images/stations.png" alt="Stations Icon" class="nav-icon" />
+				Stations
+			</button>
+			<button class:active={currentPage === 'clients'} on:click={() => navigateTo('clients')}>
+				<img src="/images/clients.png" alt="Clients Icon" class="nav-icon" />
+				Clients
+			</button>
+			<button class:active={currentPage === 'maintenance'} on:click={() => navigateTo('maintenance')}>
+				<img src="/images/maintenance.png" alt="Maintenance Icon" class="nav-icon" />
+				Maintenance
+			</button>
 		</nav>
 
 		<div class="content">
 			<section>
-				{#if currentPage === 'home'}
+				{#if currentPage === 'dashboard'}
 					<h2>Welcome to KFC Management</h2>
 					<p>Select a section from the navigation menu to get started.</p>
 				{:else if currentPage === 'profile'}
@@ -57,9 +83,6 @@
 				{:else if currentPage === 'inventory'}
 					<h2>Inventory</h2>
 					<p>Here you can manage inventory.</p>
-				{:else if currentPage === 'dashboard'}
-					<h2>Dashboard</h2>
-					<p>Here you can view the dashboard.</p>
 				{:else if currentPage === 'personnel'}
 					<h2>Personnel</h2>
 					<p>Here you can manage personnel.</p>
@@ -120,6 +143,13 @@
 		transition: background-color 0.3s ease;
 	}
 
+	.avatar-image {
+		width: 100%;
+		height: 100%;
+		border-radius: 50%;
+		object-fit: cover;
+	}
+
 	.profile-avatar:hover, .profile-avatar:focus {
 		background-color: #2A69D4;
 		outline: none;
@@ -139,6 +169,8 @@
 		font-size: 0.9em;
 		text-align: left;
 		transition: all 0.3s ease;
+		display: flex;
+		align-items: center;
 	}
 
 	button:hover {
@@ -148,6 +180,12 @@
 	button.active {
 		background-color: #FF0000;
 		color: white;
+	}
+
+	.nav-icon {
+		width: 20px;
+		height: 20px;
+		margin-right: 0.5em;
 	}
 
 	.content {
