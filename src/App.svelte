@@ -1,12 +1,49 @@
 <script>
+	import { onMount, onDestroy } from 'svelte';
+	import { fade, fly, slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+
+	let socket;
+	let messages = [];
+
 	let currentPage = 'dashboard';
 	let userName = "Maya Angela";
 	let currentTab = 'credentials';
 	let activeSection = 'education';
 
+	let showContent = false;
+
+	onMount(() => {
+		setTimeout(() => {
+			showContent = true;
+		}, 100);
+
+		socket = new WebSocket('ws://localhost:8000/ws/kfc/');
+
+		socket.onmessage = (event) => {
+			const data = JSON.parse(event.data);
+			messages = [...messages, data.message];
+		};
+
+		socket.onclose = () => {
+			console.log('WebSocket connection closed');
+		};
+	});
+
+	onDestroy(() => {
+		if (socket) {
+			socket.close();
+		}
+	});
+	
+	function sendMessage(message) {
+		if (socket && socket.readyState === WebSocket.OPEN) {
+			socket.send(JSON.stringify({ message: 'Hello from Svelte' }));
+		}
+	}
+
 	function navigateTo(page) {
 		currentPage = page;
-		// Reset the tab when changing pages
 		currentTab = getDefaultTab(page);
 	}
 
@@ -17,7 +54,6 @@
 	}
 
 	function handleLogout() {
-		// Add logout functionality here
 		console.log('Logging out...');
 	}
 
@@ -37,7 +73,6 @@
 				return 'overview';
 			case 'maintenance':
 				return 'schedule';
-			// Add more cases for other pages as needed
 			default:
 				return '';
 		}
@@ -62,75 +97,50 @@
 					on:click={handleProfileClick} 
 					on:keydown={handleProfileClick}
 					tabindex="0"
-					 role="button"
-					 aria-label="View Profile"
+					role="button"
+					aria-label="View Profile"
 				>
 					<img src="/images/avatar.jpg" alt="User Avatar" class="avatar-image" />
 				</div>
 				<span class="profile-name">{userName}</span>
 			</div>
-			<button class:active={currentPage === 'dashboard'} on:click={() => navigateTo('dashboard')}>
-				<img src="/images/dashboard.png" alt="Dashboard Icon" class="nav-icon" />
-				Dashboard
-			</button>
-			<button class:active={currentPage === 'channels'} on:click={() => navigateTo('channels')}>
-				<img src="/images/channels.png" alt="Channels Icon" class="nav-icon" />
-				Channels
-			</button>
-			<button class:active={currentPage === 'schedules'} on:click={() => navigateTo('schedules')}>
-				<img src="/images/schedules.png" alt="Schedules Icon" class="nav-icon" />
-				Schedules
-			</button>
-			<button class:active={currentPage === 'inventory'} on:click={() => navigateTo('inventory')}>
-				<img src="/images/inventory.png" alt="Inventory Icon" class="nav-icon" />
-				Inventory
-			</button>
-			<button class:active={currentPage === 'personnel'} on:click={() => navigateTo('personnel')}>
-				<img src="/images/personnel.png" alt="Personnel Icon" class="nav-icon" />
-				Personnel
-			</button>
-			<button class:active={currentPage === 'orders'} on:click={() => navigateTo('orders')}>
-				<img src="/images/orders.png" alt="Orders Icon" class="nav-icon" />
-				Orders
-			</button>
-			<button class:active={currentPage === 'products'} on:click={() => navigateTo('products')}>
-				<img src="/images/products.png" alt="Products Icon" class="nav-icon" />
-				Products
-			</button>
-			<button class:active={currentPage === 'stations'} on:click={() => navigateTo('stations')}>
-				<img src="/images/stations.png" alt="Stations Icon" class="nav-icon" />
-				Stations
-			</button>
-			<button class:active={currentPage === 'clients'} on:click={() => navigateTo('clients')}>
-				<img src="/images/clients.png" alt="Clients Icon" class="nav-icon" />
-				Clients
-			</button>
-			<button class:active={currentPage === 'maintenance'} on:click={() => navigateTo('maintenance')}>
-				<img src="/images/maintenance.png" alt="Maintenance Icon" class="nav-icon" />
-				Maintenance
-			</button>
+			{#each ['dashboard', 'channels', 'schedules', 'inventory', 'personnel', 'orders', 'products', 'stations', 'clients', 'maintenance'] as page, i}
+				<button 
+					class:active={currentPage === page} 
+					on:click={() => navigateTo(page)}
+					in:fly={{ y: 20, delay: i * 50, duration: 300, easing: quintOut }}
+				>
+					<img src="/images/{page}.png" alt="{page} Icon" class="nav-icon" />
+					{page.charAt(0).toUpperCase() + page.slice(1)}
+				</button>
+			{/each}
 			<div class="nav-spacer"></div>
-			<button class="logout-button" on:click={handleLogout}>
+			<button class="logout-button" on:click={handleLogout} in:fly={{ y: 20, delay: 500, duration: 300, easing: quintOut }}>
 				<img src="/images/log-out.png" alt="Log Out Icon" class="nav-icon" />
 				Log Out
 			</button>
 		</nav>
 
 		<div class="content">
-			<section>
+			{#if showContent}
+			<section in:fade={{duration: 300}}>
 				{#if currentPage === 'dashboard'}
 					<h2>Welcome to KFC Management</h2>
 					<p>Select a section from the navigation menu to get started.</p>
 				{:else if currentPage === 'profile'}
 					<h2>Profile</h2>
 					<div class="tabs">
-						<button class:active={currentTab === 'credentials'} on:click={() => switchTab('credentials')}>Credentials</button>
-						<button class:active={currentTab === 'resume'} on:click={() => switchTab('resume')}>Resume</button>
-						<button class:active={currentTab === 'documents'} on:click={() => switchTab('documents')}>Documents</button>
-						<button class:active={currentTab === 'preferences'} on:click={() => switchTab('preferences')}>Preferences</button>
-						<button class:active={currentTab === 'messages'} on:click={() => switchTab('messages')}>Messages</button>
+						{#each ['credentials', 'resume', 'documents', 'preferences', 'messages'] as tab, i}
+							<button 
+								class:active={currentTab === tab} 
+								on:click={() => switchTab(tab)}
+								in:fly={{ x: -20, delay: i * 50, duration: 300, easing: quintOut }}
+							>
+								{tab.charAt(0).toUpperCase() + tab.slice(1)}
+							</button>
+						{/each}
 					</div>
-					<div class="tab-content">
+					<div class="tab-content" in:fade={{duration: 300}}>
 						{#if currentTab === 'credentials'}
 							<div class="credentials-content">
 								<div class="avatar-container">
@@ -191,15 +201,14 @@
 								</div>
 							</div>
 							<div class="resume-sections">
-								{#each sections as section}
-									<div class="accordion-item">
+								{#each sections as section, i}
+									<div class="accordion-item" in:fly={{ y: 20, delay: i * 50, duration: 300, easing: quintOut }}>
 										<button class="accordion-toggle" on:click={() => toggleSection(section.id)}>
 											{section.title}
 											<span class="toggle-icon">{activeSection === section.id ? '▼' : '▶'}</span>
 										</button>
 										{#if activeSection === section.id}
-											<div class="accordion-content">
-												<!-- Add content for each section here -->
+											<div class="accordion-content" in:slide={{duration: 300}}>
 												<p>{section.content}</p>
 											</div>
 										{/if}
@@ -226,7 +235,6 @@
 					<p>Here you can manage schedules.</p>
 				{:else if currentPage === 'inventory'}
 					<h2>Inventory</h2>
-					<!-- Add tabs for inventory page if needed -->
 					<p>Here you can manage inventory.</p>
 				{:else if currentPage === 'personnel'}
 					<h2>Personnel</h2>
@@ -245,10 +253,10 @@
 					<p>Here you can manage clients.</p>
 				{:else if currentPage === 'maintenance'}
 					<h2>Maintenance</h2>
-					<!-- Add tabs for maintenance page if needed -->
 					<p>Here you can manage maintenance.</p>
 				{/if}
 			</section>
+			{/if}
 		</div>
 	</div>
 </main>
@@ -257,7 +265,7 @@
 	@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap');
 
 	main {
-		font-family: 'Roboto', sans-serif;
+		font-family: 'PT Sans', sans-serif;
 		height: 100vh;
 		background-color: #f5f5f5;
 	}
@@ -326,7 +334,7 @@
 		border: none;
 		border-radius: 4px;
 		cursor: pointer;
-		font-family: 'Roboto', sans-serif;
+		font-family: 'PT Sans', sans-serif;
 		font-weight: 600;
 		font-size: 0.8em;
 		text-align: left;
@@ -383,6 +391,10 @@
 		border-radius: 4px;
 		cursor: pointer;
 		transition: background-color 0.3s ease;
+	}
+
+	.tabs button:hover {
+		background-color: #e0e0e0;
 	}
 
 	.tabs button.active {
@@ -466,7 +478,8 @@
 
 	.user-info-name {
 		font-size: 2.5em;
-		font-weight: 700;
+		font-weight: 500;
+		font-family: 'PT Sans', sans-serif;
 		margin-right: auto; /* This will push the name to the left */
 	}
 
@@ -478,7 +491,7 @@
 
 	.user-info-position {
 		font-size: 1.3em;
-		font-weight: 700;
+		font-weight: 500;
 		color: #2b78ff;
 		margin-top: 0.5em;
 	}
@@ -545,16 +558,17 @@
 
 	.accordion-item {
 		border-radius: 4px;
-		margin-bottom: 1em;
+		margin-bottom: 10px;
 	}
 
 	.accordion-toggle {
 		width: 100%;
-		padding: 0.5em 1em;
+		text-align: left;
+		padding: 10px;
 		border: none;
-		border-radius: 4px;
+		border-radius: 5px;
 		cursor: pointer;
-		transition: background-color 0.3s ease;
+		transition:  0.3s ease;
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -564,19 +578,21 @@
 	}
 
 	.accordion-toggle:hover {
-		background-color: #f5f5f5;
+		background-color: #e0e0e0;
 	}
 
 	.toggle-icon {
 		font-size: 1.2em;
 		font-weight: bold;
+		float: right;
 	}
 
 	.accordion-content {
-		padding: 1em;
+		padding: 10px;
 		font-size: 1em;
 		font-weight: 450;
 		color: #696766;
+		border-radius: 0 0 5px 5px;
 	}
 
 </style>
